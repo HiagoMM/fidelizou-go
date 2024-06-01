@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fidelizou-go/internal/handlers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,21 +9,12 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
+	h := handlers.NewHandlers(s.db)
 
-	r.GET("/", s.HelloWorldHandler)
+	r.GET("/health", h.HealthHandler)
 
-	r.GET("/health", s.healthHandler)
+	user := r.Group("/user")
+	user.GET("/me", h.GetUserHandler)
 
 	return r
-}
-
-func (s *Server) HelloWorldHandler(c *gin.Context) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	c.JSON(http.StatusOK, resp)
-}
-
-func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
 }
