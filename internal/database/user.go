@@ -15,8 +15,17 @@ func (r *repository) GetUser(email string) (models.User, error) {
 	return user, nil
 }
 
-func (r *repository) ToggleUserRole(email string) error {
-	_, err := r.db.Exec("UPDATE users SET role = NOT role WHERE email = $1", email)
+func (r *repository) UpdateUserRole(newRole int8, email string) error {
+
+	_, err := r.db.Exec("UPDATE users SET role = $1 WHERE email = $2 ", newRole, email)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *repository) CreateUser(user models.User) error {
+	_, err := r.db.NamedExec("INSERT INTO users (email, role) VALUES (:Email, $2)", user)
 	if err != nil {
 		return err
 	}

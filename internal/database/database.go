@@ -18,8 +18,9 @@ type Repository interface {
 	Health() map[string]string
 	Close() error
 
-	GetUser(email string) (models.User, error)
-	ToggleUserRole(email string) error
+	CreateUser(models.User) error
+	GetUser(string) (models.User, error)
+	UpdateUserRole(int8, string) error
 }
 
 type repository struct {
