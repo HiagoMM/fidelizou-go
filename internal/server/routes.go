@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fidelizou-go/internal/entities/models"
+	"fidelizou-go/internal/db"
 	"fidelizou-go/internal/handlers"
 	"net/http"
 
@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	OnlyProvider      = []int{models.RoleClient}
-	ProviderAndClient = []int{models.RoleClient, models.RoleProvider}
+	OnlyProvider      = []db.UserRole{db.UserRolePROVIDER}
+	ProviderAndClient = []db.UserRole{db.UserRoleCLIENT, db.UserRolePROVIDER}
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -19,10 +19,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Use(ErrorMiddleware())
 
-	r.GET("/health", h.HealthHandler)
-
 	base := r.Group("/")
-	base.POST("/login", h.LoginHandler)
+	base.GET("/auth/:provider", h.AuthLoginHandler)
+	base.GET("/logout/:provider", h.AuthLogoutHandler)
+	base.GET("/auth/:provider/callback", h.AuthCallbackHandler)
 
 	user := base.Group("/users", AuthMiddleware(ProviderAndClient))
 	user.GET("/me", h.GetUserHandler)

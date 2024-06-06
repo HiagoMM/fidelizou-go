@@ -7,8 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var keySession = "session"
+
 func GetSession(c *gin.Context) (session models.Session) {
-	sessionAny, exists := c.Get("session")
+	sessionAny, exists := c.Get(keySession)
 
 	if !exists {
 		c.Error(err.NewUnauthorized("Sessão não encontrada"))
@@ -18,4 +20,8 @@ func GetSession(c *gin.Context) (session models.Session) {
 
 	session = sessionAny.(models.Session)
 	return session
+}
+
+func SetSession(c *gin.Context, session models.Session) {
+	c.Set(keySession, session)
 }

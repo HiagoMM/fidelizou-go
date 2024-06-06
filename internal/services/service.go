@@ -1,19 +1,13 @@
 package services
 
-import (
-	"fidelizou-go/internal/database"
-)
+import "fidelizou-go/internal/db"
 
 type Service struct {
-	db database.Repository
+	db *db.Queries
 }
 
-func NewService(db database.Repository) Service {
+func NewService(db *db.Queries) Service {
 	return Service{
 		db: db,
 	}
-}
-
-func (s *Service) Health() map[string]string {
-	return s.db.Health()
 }

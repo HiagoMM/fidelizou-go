@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"fidelizou-go/internal/db"
 	"fidelizou-go/internal/entities/err"
 	"fidelizou-go/internal/utils"
 	"net/http"
@@ -25,15 +26,10 @@ func ErrorMiddleware() gin.HandlerFunc {
 	}
 }
 
-func AuthMiddleware(canAccess []int) gin.HandlerFunc {
+func AuthMiddleware(canAccess []db.UserRole) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := utils.GetSession(c)
-		if session.Email == "" {
-			c.Error(err.NewUnauthorized("Sessão não encontrada"))
-			c.Abort()
-			return
-		}
-		if !slices.Contains(canAccess, int(session.Role)) {
+		if !slices.Contains(canAccess, db.UserRole(session.Role)) {
 			c.Error(err.NewForbidden("Usuário não autorizado"))
 			c.Abort()
 			return
